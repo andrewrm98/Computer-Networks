@@ -1,0 +1,17 @@
+Andrew Morrison
+Project 1
+ReadMe
+
+Compilation
+•	To compile simple use the make all command. This will compile both the client and server.
+
+Running the Client
+•	To run the client run this command: ./client [option] [URL] [port]
+
+Running the Server
+•	To run the server run this command: ./server [port]
+•	Can be terminated with SIGTERM
+
+Connecting to the Server with the Client
+•	In order to connect to this server: ./server 7890, run this client: ./client ccc.wpi.edu/index.html 7890
+•	For the HTML file either index.html or TMDG.html can be specified
