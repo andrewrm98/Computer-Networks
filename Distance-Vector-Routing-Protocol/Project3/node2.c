@@ -111,11 +111,11 @@ void rtinit2() {
                 packet->mincost[x] = dt2.costs[x][x]; // does this work
             }
             toLayer2(*packet);
-            printf("\nAt time: %ld\n", clocktime);
+            printf("\nAt time: %ld :: \n", clocktime);
             printf("Packet sent to %d by %d\n", packet->destid, packet->sourceid);
         }
     }
-    printf("\nAt time: %ld\n", clocktime);
+    printf("\nAt time: %ld :: \n", clocktime);
     printdt2(SOURCEID, neighbor2, &dt2);
 }
 
@@ -124,35 +124,26 @@ void rtupdate2( struct RoutePacket *rcvdpkt ) {
     printf("\n\n!!!---Updating...---!!!\n\n");
     int SOURCEID = 2; // id of the source
     /* Get the new distance table */
-    int copy;
     int temp;
     int tempArray[MAX_NODES];
     int i,j,x,y;
     int destID;
     int flag = 0;
     struct RoutePacket *packet = malloc(sizeof(struct RoutePacket));
-    //printf("Rcvd packet sourceid: %d", dt2.costs[rcvdpkt->sourceid][i]);
-    printf("Made it\n");
-
     /* update distance table */
     for(i = 0; i < MAX_NODES; i++) {
         if(i != SOURCEID) {
             if(dt2.costs[i][rcvdpkt->sourceid] > dt2.costs[rcvdpkt->sourceid][rcvdpkt->sourceid] + rcvdpkt->mincost[i]) { // check all nodes in row if there is a faster way
+                printf("Distance table updated!!!\n");
                 dt2.costs[i][rcvdpkt->sourceid] = dt2.costs[rcvdpkt->sourceid][rcvdpkt->sourceid] + rcvdpkt->mincost[i];   
                 flag = 1;
             }
         }
     }
-    printf("Made it\n");
-
     for (j = 0; j < neighbor2->NodesInNetwork; j++) {
-        printf("Yo\n");
         if(j != SOURCEID) {
-            printf("j\n");
-
-            /* Fine the smallest values */
+            /* Find the smallest values */
             if(flag == 1) {         // If the table has changed
-                printf("Yo\n");
                 for(x = 0; x < MAX_NODES; x++) {
                 temp = dt2.costs[x][0];         // temp is first value of each row
                 for(y = 0; y <MAX_NODES; y++) {
@@ -163,19 +154,25 @@ void rtupdate2( struct RoutePacket *rcvdpkt ) {
                 }
                 tempArray[x] = temp;            // add the smallest value of the row into tempArray
             }
-            printf("Made it\n");
 
             /* Send packet to neighbors */
             packet->sourceid = SOURCEID;
             packet->destid = j;
             memcpy(&packet->mincost, &tempArray, sizeof(int)*4);
             toLayer2(*packet);                   // Send packet to all neighbors (the project will ignore packets that are not connected)
+            int print;
+            printf("Packet mincost sent by %d to %d:: ", packet->sourceid, packet->destid);
+            for(print = 0; print < MAX_NODES; print++)
+            {
+                printf("%d ", packet->mincost[print]);
+            }
+            printf("\n");
             }
         }
     }     
 
     /* start output trace */
-    printf("\nAt time: %ld", clocktime);
+    printf("\nAt time: %ld :: ", clocktime);
     printf("Packet was recieved. Sender of packet: %d\nReceiver of packet: %d\n", rcvdpkt->sourceid, rcvdpkt->destid);
     printf("Updated distance table: \n");
     printdt2(2, neighbor2, &dt2);
